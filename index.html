@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta name="format-detection" content="telephone=no">
+        <meta name="msapplication-tap-highlight" content="no">
+        <meta name="viewport" content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width">
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto">
+        <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+        <link rel="stylesheet" href="https://code.getmdl.io/1.2.1/material.grey-amber.min.css" />
+        <link rel="stylesheet" type="text/css" href="css/index.css">
+        <title>Star Wars Book</title>
+    </head>
+    <body>
+        <div id="splashscreen"><div id="loadingResources" class="mdl-progress mdl-js-progress"></div></div>
+        <div id="loadingData" class="mdl-spinner mdl-js-spinner mdl-spinner--single-color is-active"></div>
+        <div class="mdl-layout mdl-js-layout mdl-layout--fixed-drawer mdl-layout--fixed-header">
+            <header class="mdl-layout__header">
+                <div class="mdl-layout__header-row">
+                    <div class="mdl-layout-spacer"></div>
+                    <div class="mdl-textfield mdl-js-textfield mdl-textfield--expandable mdl-textfield--floating-label mdl-textfield--align-right">
+                        <label class="mdl-button mdl-js-button mdl-button--icon" for="inputSearch">
+                            <i class="material-icons">search</i>
+                        </label>
+                        <div class="mdl-textfield__expandable-holder">
+                            <input class="mdl-textfield__input" type="text" name="inputSearch" id="inputSearch">
+                        </div>
+                    </div>
+                </div>
+            </header>
+            <div class="mdl-layout__drawer">
+                <span class="mdl-layout-title">Star Wars Book</span>
+                <nav class="mdl-navigation padding0">
+                    <a class="mdl-navigation__link" data-url="films" href="#">Films</a>
+                    <a class="mdl-navigation__link" data-url="people" href="#">People</a>
+                    <a class="mdl-navigation__link" data-url="planets" href="#">Planets</a>
+                    <a class="mdl-navigation__link" data-url="species" href="#">Species</a>
+                    <a class="mdl-navigation__link" data-url="starships" href="#">Starships</a>
+                    <a class="mdl-navigation__link" data-url="vehicles" href="#">Vehicles</a>
+                    <a class="mdl-navigation__link" onclick="app.exit()">Exit</a>
+                </nav>
+            </div>
+            <main class="mdl-layout__content">
+                <div class="page-content" id="container">
+
+                </div>
+            </main>
+        </div>
+        <script src="cordova.js"></script>
+        <script src="js/jquery-3.1.1.min.js"></script>
+        <script src="https://code.getmdl.io/1.2.1/material.min.js"></script>
+        <script src="js/fastclick.js"></script>
+        <script src="js/index.js"></script>
+        
+    </body>
+</html>
