@@ -1,5 +1,4 @@
-var app = 
-{
+var app = {
     colorFilms: '#bcaaa4',
     colorPeople: '#ff8a65',
     colorPlanets: '#ffb74d',
@@ -7,21 +6,19 @@ var app =
     colorStarships: '#4da0c1',
     colorVehicles: '#ef9a9a',
     currentPage: 1,
-    url: "http://swapi.co/api/",
+    url: "https://swapi.co/api/",
     allURL: ["films","people","planets","species","starships","vehicles"],
     apiPrincipal: 0,
     llamadaApiPrincipal: true,
     contArrayLlamadaPrincipal: 0,
     objetoAPI: [],
-    splashscreen: function()
-    {
+    splashscreen: function() {
         $("#splashscreen").addClass("hideSplash");
         $("#splashscreen").one("webkitAnimationEnd oanimationend msAnimationEnd animationend",function(e) { $(this).hide(); });
         $("#splashscreen").one("webkitTransitionEnd otransitionend oTransitionEnd msTransitionEnd transitionend",function(e) { $(this).hide(); });
         app.initialize();
     },
-    dialogApp: function(message)
-    {
+    dialogApp: function(message) {
         var html = '<dialog class="mdl-dialog">';
         html+= '<div class="mdl-dialog__content">';
         html+= '<p>';
@@ -40,37 +37,29 @@ var app =
             dialog.close();
         });
     },
-    loadingResources: function(urlParam)
-    {
-        if (app.contArrayLlamadaPrincipal<app.allURL.length)
-        {
-            if (app.llamadaApiPrincipal)
-            {
+    loadingResources: function(urlParam) {
+        if (app.contArrayLlamadaPrincipal<app.allURL.length) {
+            if (app.llamadaApiPrincipal) {
                 app.llamadaApiPrincipal = false;
                 var url;
                 if (urlParam!==undefined) { url = urlParam; }
                 else { url = app.url + app.allURL[app.contArrayLlamadaPrincipal]; }
-                $.ajax(
-                { 
+                $.ajax({ 
                     url: url, 
                     type: "get", 
                     dataType: "json", 
                     cache: false,
-                    success: function(data)
-                    {
+                    success: function(data) {
                         var tiempoLoad = ((app.contArrayLlamadaPrincipal+1) * 100) / app.allURL.length ;
                         $("#loadingResources > .progressbar.bar.bar1").css("width",tiempoLoad + "%");
                         var objDatos = [data.count, data.next, data.previous, data.results];
                         var objGrupo = [app.allURL[app.contArrayLlamadaPrincipal],objDatos];
                         app.objetoAPI.push(objGrupo);
-                        if (data.next != null)
-                        {
+                        if (data.next != null) {
                             app.apiPrincipal++;
                             app.llamadaApiPrincipal = true;
                             app.loadingResources(data.next);
-                        }
-                        else
-                        {
+                        } else {
                             app.llamadaApiPrincipal = true;
                             app.contArrayLlamadaPrincipal++;                        
                             app.loadingResources();
@@ -78,15 +67,12 @@ var app =
                     }
                 });
             }
-        }
-        else
-        {
+        } else {
             app.splashscreen();
         }
     },
     initialize: function() { document.addEventListener('deviceready', app.onDeviceReady(), false); },
-    onDeviceReady: function() 
-    { 
+    onDeviceReady: function() { 
         console.log(app.objetoAPI);
         $("#loadingResources").remove();
         $("#loadingData").css("top",($(window).height() / 2));
@@ -98,38 +84,29 @@ var app =
         $("a.mdl-navigation__link:nth-child(6)").css("background-color",app.colorVehicles);
         
         FastClick.attach(document.body);
-        $("a").on("click",function()
-        {
+        $("a").on("click",function() {
             $("header > .mdl-layout__drawer-button").click();
             app.loading(true);
             app.menuOptions($(this).attr("data-url"));
         });
-        $("#rotateVideo").on("click",function()
-        {
-            if ($("#dialogVideo").attr("data-rotate") == 0)
-            {
+        $("#rotateVideo").on("click",function() {
+            if ($("#dialogVideo").attr("data-rotate") == 0) {
                 $("#dialogVideo").css({"transform":"rotate(90deg) scale(1.7, 1.4)"});
                 $("#dialogVideo").attr("data-rotate","90");
-            }
-            else
-            {
-
+            } else {
                 $("#dialogVideo").css({"transform":"rotate(0deg) scale(1, 1)"});
                 $("#dialogVideo").attr("data-rotate","0");
             }
         });
-        $("#closeDialog").on("click",function()
-        {
+        $("#closeDialog").on("click",function() {
             var dialog = document.querySelector('dialog');
             dialog.close();
             var video = document.getElementById("videos");
             video.pause();
             video.currentTime = 0;
         })
-        $("#inputSearch").on("keyup", function(e)
-        {
-            if (e.keyCode == 13 && $(this).val().length > 0)
-            {
+        $("#inputSearch").on("keyup", function(e) {
+            if (e.keyCode == 13 && $(this).val().length > 0) {
                 app.loading(true);
                 $("#container").empty();
                 var textoBuscar = $(this).val();
@@ -137,21 +114,17 @@ var app =
                 var html = app.navbarPagination(arrayNavbar);
                 $("#container").append(html);
                 var totalRecors = 0;
-                $(app.objetoAPI).each(function(i,v)
-                {
-                    if (/films/.test(v[0]))
-                    {
+                $(app.objetoAPI).each(function(i,v) {
+                    if (/films/.test(v[0])) {
                         var data = v[1];
-                        if (data[0] !== undefined)
-                        {
+                        if (data[0] !== undefined) {
                             var totalRegistros = data[0];
                             var next = data[1];
                             var prev = data[2]
                             var results = data[3];
                             var resultsSort = app.sortByColumn(results, 'release_date');
                             var html = "";
-                            $(resultsSort).each(function(i2,v2)
-                            {
+                            $(resultsSort).each(function(i2,v2) {
                                 var urlFilm = v2['url'];
                                 // Cuando fue creado el registro en la bbdd
                                 var created = v2['created'];
@@ -178,8 +151,7 @@ var app =
                                 var t = v2['release_date']; 
                                 var t6 = t.search(miExpReg);
                                 if (t1<0 && t2<0 && t3<0 && t4<0 && t5<0 && t6<0) { mostrar = false; }
-                                if (mostrar == true)
-                                {
+                                if (mostrar == true) {
                                     html+= '<div class="demo-card-wide mdl-card mdl-shadow--4dp" data-type="films">';
                                     html+= app.cardImage(arrayImage);
                                     html+= app.cardInfo(arrayInfo);
@@ -193,18 +165,15 @@ var app =
                         }
                         $("#container .demo-card-wide[data-type=films]").css("background-color",app.colorFilms);
                     }
-                    if (/people/.test(v[0]))
-                    {
+                    if (/people/.test(v[0])) {
                         var data = v[1];
-                        if (data[0] !== undefined)
-                        {
+                        if (data[0] !== undefined) {
                             var totalRegistros = data[0];
                             var next = data[1];
                             var prev = data[2];
                             var results = data[3];
                             var html = "";
-                            $(results).each(function(i2,v2)
-                            {
+                            $(results).each(function(i2,v2) {
                                 var arrayDatosInfo = [v2['birth_year'],v2['eye_color'],v2['gender'],v2['hair_color'],v2['height'],v2['mass'],v2['name'],v2['skin_color'],v2['homeworld']];
                                 var arrayDatosInfoExtra = [v2['films'],v2['species'],v2['starships'],v2['vehicles']];
                                 var mostrar = true;
@@ -226,8 +195,7 @@ var app =
                                 var t = v2['skin_color']; 
                                 var t8 = t.search(miExpReg);
                                 if (t1<0 && t2<0 && t3<0 && t4<0 && t5<0 && t6<0 && t7<0 && t8<0) { mostrar = false; }
-                                if (mostrar == true)
-                                {
+                                if (mostrar == true) {
                                     html+= '<div class="demo-card-wide mdl-card mdl-shadow--4dp" data-type="people">';
                                     html+= app.cardImage(app.pictureCharacter(v2['name']));
                                     html+= app.cardInfoCharacters(arrayDatosInfo);
@@ -240,18 +208,15 @@ var app =
                         }
                         $("#container .demo-card-wide[data-type=people]").css("background-color",app.colorPeople);
                     }
-                    if (/planets/.test(v[0]))
-                    {
+                    if (/planets/.test(v[0])) {
                         var data = v[1];
-                        if (data[0] !== undefined)
-                        {
+                        if (data[0] !== undefined) {
                             var totalRegistros = data[0];
                             var next = data[1];
                             var prev = data[2];
                             var results = data[3];
                             var html = "";
-                            $(results).each(function(i2,v2)
-                            {
+                            $(results).each(function(i2,v2) {
                                 var arrayDatos = [v2['climate'],v2['diameter'],v2['gravity'],v2['name'],v2['orbital_period'],v2['population'],v2['rotation_period'],v2['surface_water'],v2['terrain']];
                                 var arrayDatosInfoExtra = [v2['films'],v2['residents']];
                                 var mostrar = true;
@@ -275,8 +240,7 @@ var app =
                                 var t = v2['terrain']; 
                                 var t9 = t.search(miExpReg);
                                 if (t1<0 && t2<0 && t3<0 && t4<0 && t5<0 && t6<0 && t7<0 && t8<0 && t9<0) { mostrar = false; }
-                                if (mostrar == true)
-                                {
+                                if (mostrar == true) {
                                     html+= '<div class="demo-card-wide mdl-card mdl-shadow--4dp" data-type="planets">';
                                     html+= app.cardImage(app.picturePlanets(v2['name']));
                                     html+= app.cardInfoPlanets(arrayDatos);
@@ -289,18 +253,15 @@ var app =
                         }
                         $("#container .demo-card-wide[data-type=planets]").css("background-color",app.colorPlanets);
                     }
-                    if (/species/.test(v[0]))
-                    {
+                    if (/species/.test(v[0])) {
                         var data = v[1];
-                        if (data[0] !== undefined)
-                        {
+                        if (data[0] !== undefined) {
                             var totalRegistros = data[0];
                             var next = data[1];
                             var prev = data[2];
                             var results = data[3];
                             var html = "";
-                            $(results).each(function(i2,v2)
-                            {
+                            $(results).each(function(i2,v2) {
                                 var arrayDatos = [v2['average_height'],v2['average_lifespan'],v2['classification'],v2['designation'],v2['eye_colors'],v2['hair_colors'],v2['language'],v2['name'],v2['skin_colors']];
                                 var arrayDatosInfoExtra = [v2['films'],v2['people']];
                                 var mostrar = true;
@@ -324,8 +285,7 @@ var app =
                                 var t = v2['skin_colors']; 
                                 var t9 = t.search(miExpReg);
                                 if (t1<0 && t2<0 && t3<0 && t4<0 && t5<0 && t6<0 && t7<0 && t8<0 && t9<0) { mostrar = false; }
-                                if (mostrar == true)
-                                {
+                                if (mostrar == true) {
                                     html+= '<div class="demo-card-wide mdl-card mdl-shadow--4dp" data-type="planets">';
                                     html+= app.cardImage(app.pictureSpecies(v2['name']));
                                     html+= app.cardInfoSpecies(arrayDatos);
@@ -338,18 +298,15 @@ var app =
                         }
                         $("#container .demo-card-wide[data-type=planets]").css("background-color",app.colorPlanets);
                     }
-                    if (/starships/.test(v[0]))
-                    {
+                    if (/starships/.test(v[0])) {
                         var data = v[1];
-                        if (data[0] !== undefined)
-                        {
+                        if (data[0] !== undefined) {
                             var totalRegistros = data[0];
                             var next = data[1];
                             var prev = data[2];
                             var results = data[3];
                             var html = "";
-                            $(results).each(function(i2,v2)
-                            {
+                            $(results).each(function(i2,v2) {
                                 var arrayDatos = [v2['MGLT'],v2['cargo_capacity'],v2['consumables'],v2['cost_in_credits'],v2['crew'],v2['hyperdrive_rating'],v2['length'],v2['manufacturer'],v2['max_atmosphering_speed'],v2['model'],v2['name'],v2['passengers'],v2['starship_class']];
                                 var arrayDatosInfoExtra = [v2['films'],v2['pilots']];
                                 var mostrar = true;
@@ -383,8 +340,7 @@ var app =
                                 var t = v2['starship_class']; 
                                 var t14 = t.search(miExpReg);
                                 if (t1<0 && t2<0 && t3<0 && t4<0 && t5<0 && t6<0 && t7<0 && t8<0 && t9<0 && t10<0 && t11<0 && t12<0 && t13<0 && t14<0) { mostrar = false; }
-                                if (mostrar == true)
-                                {
+                                if (mostrar == true) {
                                     html+= '<div class="demo-card-wide mdl-card mdl-shadow--4dp" data-type="planets">';
                                     html+= app.cardImage(app.pictureStarships(v2['name']));
                                     html+= app.cardInfoStarships(arrayDatos);
@@ -403,44 +359,32 @@ var app =
         });
         this.initAd(); 
     },
-
-    openSubmenu: function(obj)
-    {
-        if ($(obj).attr("data-open") == 0)        
-        {
+    openSubmenu: function(obj) {
+        if ($(obj).attr("data-open") == 0) {
             $(obj).attr("data-open","1");
             $(obj).children("i").removeClass('submenuClose');
             $(obj).children("ul").removeClass('hideSubmenuUL');
-        }
-        else
-        {
+        } else {
             $(obj).attr("data-open","0");
             $(obj).children("i").addClass('submenuClose');
             $(obj).children("ul").addClass('hideSubmenuUL');
         }
-        
     },
-    initAd: function()
-    {
+    initAd: function() {
         // ADMOB LIGHTSABER
-        if ( window.plugins && window.plugins.AdMob ) 
-        {
-            var ad_units = 
-            {
-                ios : 
-                {
+        if ( window.plugins && window.plugins.AdMob ) {
+            var ad_units = {
+                ios : {
                     banner: 'ca-app-pub-5933435613682623/6903142998',       //PUT ADMOB ADCODE HERE 
                     interstitial: 'ca-app-pub-5933435613682623/9856609397'  //PUT ADMOB ADCODE HERE 
                 },
-                android : 
-                {
+                android : {
                     banner: 'ca-app-pub-5933435613682623/6903142998',       //PUT ADMOB ADCODE HERE 
                     interstitial: 'ca-app-pub-5933435613682623/9856609397'  //PUT ADMOB ADCODE HERE 
                 }
             };
             var admobid = ( /(android)/i.test(navigator.userAgent) ) ? ad_units.android : ad_units.ios;
-            window.plugins.AdMob.setOptions( 
-            {
+            window.plugins.AdMob.setOptions({
                 publisherId: admobid.banner,
                 interstitialAdId: admobid.interstitial,
                 adSize: window.plugins.AdMob.AD_SIZE.SMART_BANNER,  //use SMART_BANNER, BANNER, LARGE_BANNER, IAB_MRECT, IAB_BANNER, IAB_LEADERBOARD 
@@ -454,154 +398,110 @@ var app =
             window.plugins.AdMob.createBannerView();
             //window.plugins.AdMob.createInterstitialView();  //get the interstitials ready to be shown 
             //window.plugins.AdMob.requestInterstitialAd();
-        } 
-        else 
-        {
+        } else {
             //alert( 'admob plugin not ready' ); 
         }
     },
-    registerAdEvents: function() 
-    {
-        document.addEventListener('onReceiveAd', function()
-        {
-
-        });
-        document.addEventListener('onFailedToReceiveAd', function(data)
-        {
-
-        });
-        document.addEventListener('onPresentAd', function()
-        {
-
-        });
-        document.addEventListener('onDismissAd', function()
-        { 
-
-        });
-        document.addEventListener('onLeaveToAd', function()
-        { 
-
-        });
-        document.addEventListener('onReceiveInterstitialAd', function()
-        { 
-
-        });
-        document.addEventListener('onPresentInterstitialAd', function()
-        { 
-
-        });
-        document.addEventListener('onDismissInterstitialAd', function()
-        {
+    registerAdEvents: function() {
+        document.addEventListener('onReceiveAd', function() { });
+        document.addEventListener('onFailedToReceiveAd', function(data) { });
+        document.addEventListener('onPresentAd', function() { });
+        document.addEventListener('onDismissAd', function() { });
+        document.addEventListener('onLeaveToAd', function() { });
+        document.addEventListener('onReceiveInterstitialAd', function() { });
+        document.addEventListener('onPresentInterstitialAd', function() { });
+        document.addEventListener('onDismissInterstitialAd', function() {
             //window.plugins.AdMob.createInterstitialView();          //REMOVE THESE 2 LINES IF USING AUTOSHOW 
             //window.plugins.AdMob.requestInterstitialAd();           //get the next one ready only after the current one is closed 
         });
     },
-    episode_id: function(episode_id)
-    {
+    episode_id: function(episode_id) {
         var img = "img/films/";
         var tituloVideo;
-        if (episode_id == 1) 
-        { 
+        if (episode_id == 1) { 
             img+= "Star_Wars_epI.jpg"; 
             tituloVideo = "Qui-Gon vs Darth Maul (Tatooine) - The Phantom Menace [1080p HD]";
         }
-        if (episode_id == 2) 
-        { 
+        if (episode_id == 2) { 
             img+= "Episode_two_poster.jpg"; 
             tituloVideo = "Star Wars Episode II - Battle of Geonosis HD";
         }
-        if (episode_id == 3) 
-        { 
+        if (episode_id == 3) { 
             img+= "Ep3_poster.jpg"; 
             tituloVideo = "Obi-Wan and Anakin vs Count Dooku - Revenge of the Sith [1080p HD]";
         }
-        if (episode_id == 4) 
-        { 
+        if (episode_id == 4) { 
             img+= "EpisodioIV.jpg"; 
             tituloVideo = "Opening Scene (1977) [1080p HD]";
         }
-        if (episode_id == 5) 
-        { 
+        if (episode_id == 5) { 
             img+= "EpV.jpg"; 
             tituloVideo = "Opening Scene - Empire Strikes Back [1080p HD]";
         }
-        if (episode_id == 6) 
-        { 
+        if (episode_id == 6) { 
             img+= "ReturnOfTheJediPoster1983.jpg"; 
             tituloVideo = "Star Wars: Return of the Jedi VI - Battle of Endor (Space Only) 1080p";
         }
-        if (episode_id == 7) 
-        { 
+        if (episode_id == 7) { 
             img+= "Star_Wars_Episode_VII_The_Force_Awakens.png"; 
             tituloVideo = "Star Wars The Force Awakens Millenium Falcon Scene HD";
         }
         var ret = [img,tituloVideo];
         return ret;
     },
-    cardImage: function(arrayDatos)
-    {
+    cardImage: function(arrayDatos) {
         // Imagen CARD
-        html= '<div class="mdl-card__media">';
-        html+= '<img src="' + arrayDatos[0] + '" width="100%" height="auto" border="0" alt=""  />';
-        html+= '</div>';
+        return `
+            <div class="mdl-card__media">
+                <img src="${arrayDatos[0]}" width="100%" height="auto" border="0" alt=""  />
+            </div>
+        `;
         // Fin imagen CARD
-        return html;
     },
-    cardInfo: function(arrayDatos)
-    {
+    cardInfo: function(arrayDatos) {
         // Titulo y descripción de CARD
-        html= '<div class="mdl-card__supporting-text">';
-        html+= '<h2 class="mdl-card__title-text"><b>' + arrayDatos[0] + '</b></h2><br>';
-        html+= '<div class="textJustify">' + arrayDatos[1] + '</div>';
-        html+= '</div>';
+        return `
+            <div class="mdl-card__supporting-text">
+                <h2 class="mdl-card__title-text"><b>${arrayDatos[0]}</b></h2><br>
+                <div class="textJustify">${arrayDatos[1]}</div>
+            </div>
+        `;
         // Fin titulo y descripcion de CARD
-        return html;
     },
-    convertirLinkInfoExtra: function(type, valor)
-    {
+    convertirLinkInfoExtra: function(type, valor) {
         var ret = [];
         var salir = false;
-        $(app.objetoAPI).each(function(i,v)
-        {
+        $(app.objetoAPI).each(function(i,v) {
             if (salir == true) { return false; }
             var miExpReg = new RegExp(type,"i"); 
             var t = v[0];
             var t1 = t.search(miExpReg);
-            if (t1>=0)
-            {
+            if (t1>=0) {
                 var objAPI = v[1];
                 var obj = objAPI[3];
-                $(obj).each(function(i2,v2)
-                {
-                    if (valor === v2['url'])
-                    {
-                        if (/people/.test(type))
-                        {
+                $(obj).each(function(i2,v2) {
+                    if (valor === v2['url']) {
+                        if (/people/.test(type)) {
                             ret[0] = v2['name'];
                             ret[1] = v2['url'];
                         }
-                        if (/planets/.test(type))
-                        {
+                        if (/planets/.test(type)) {
                             ret[0] = v2['name'];
                             ret[1] = v2['url'];
                         }
-                        if (/species/.test(type))
-                        {
+                        if (/species/.test(type)) {
                             ret[0] = v2['name'];
                             ret[1] = v2['url'];
                         }
-                        if (/starships/.test(type))
-                        {
+                        if (/starships/.test(type)) {
                             ret[0] = v2['name'];
                             ret[1] = v2['url'];
                         }
-                        if (/vehicles/.test(type))
-                        {
+                        if (/vehicles/.test(type)) {
                             ret[0] = v2['name'];
                             ret[1] = v2['url'];
                         }
-                        if (/films/.test(type))
-                        {
+                        if (/films/.test(type)) {
                             ret[0] = v2['episode_id'];
                             ret[1] = v2['url'];
                             ret[2] = v2['title'];
@@ -614,42 +514,46 @@ var app =
         })
         return ret;
     },
-    cardInfoExtra: function(arrayDatos)
-    {
-        html= '<div class="mdl-card__supporting-text">';
-        html+= '<h2 class="mdl-card__title-text"><b>Extra information</b></h2><br>';
-        html+= '<ul class="demo-list-item mdl-list">';
-        html+= '<li onclick="app.openSubmenu(this)" data-open="0">';
-        html+= '<i class="material-icons mdl-list__item-icon submenuClose">arrow_drop_down</i>';
-        html+= '<span class="mdl-list__item-primary-content">Video <b>(1)</b></span>';
-        html+= '<ul class="demo-list-item mdl-list ulVideo hideSubmenuUL transicion">';
-        html+= '<span class="mdl-list__item-primary-content" onclick="app.video(' + arrayDatos[0] + ')">' + arrayDatos[1] + '</span>';
-        html+= '</ul>';
-        html+= '</li>';
-        html+= '<li onclick="app.openSubmenu(this)" data-open="0">';
-        html+= '<i class="material-icons mdl-list__item-icon submenuClose">arrow_drop_down</i>';
-        html+= '<span class="mdl-list__item-primary-content">Characters <b>(' + arrayDatos[2].length + ')</b></span>';
-        html+= '<ul class="demo-list-item mdl-list ulCharacter hideSubmenuUL transicion">';
-        $(arrayDatos[2]).each(function(icharacter,vcharacter) 
-        { 
-            var character = app.convertirLinkInfoExtra("people",vcharacter);
-            html+= '<li class="">';
-            html+= '<span class="mdl-list__item-primary-content">';
-            html+= '<i class="material-icons mdl-list__item-avatar"><img src="' + app.pictureCharacter(character[0]) + '" class="iconoStyle" /></i>';
-            html+= '<span class="ajustarLI">' + character[0] + '</span>';
-            html+= '</span>';
-            html+= '</span>';
-            html+= '</li>';
+    cardInfoExtra: function(arrayDatos) {
+        let html = `
+            <div class="mdl-card__supporting-text">
+                <h2 class="mdl-card__title-text"><b>Extra information</b></h2><br>
+                <ul class="demo-list-item mdl-list">
+                    <li onclick="app.openSubmenu(this)" data-open="0">
+                        <i class="material-icons mdl-list__item-icon submenuClose">arrow_drop_down</i>
+                        <span class="mdl-list__item-primary-content">Video <b>(1)</b></span>
+                        <ul class="demo-list-item mdl-list ulVideo hideSubmenuUL transicion">
+                            <span class="mdl-list__item-primary-content" onclick="app.video(${arrayDatos[0]})">${arrayDatos[1]}</span>
+                        </ul>
+                    </li>
+                    <li onclick="app.openSubmenu(this)" data-open="0">
+                        <i class="material-icons mdl-list__item-icon submenuClose">arrow_drop_down</i>
+                        <span class="mdl-list__item-primary-content">Characters <b>(${arrayDatos[2].length})</b></span>
+                        <ul class="demo-list-item mdl-list ulCharacter hideSubmenuUL transicion">
+        `;
+        $(arrayDatos[2]).each(function(icharacter,vcharacter) { 
+            const character = app.convertirLinkInfoExtra("people",vcharacter);
+            html+= `
+                            <li class="">
+                                <span class="mdl-list__item-primary-content">
+                                    <i class="material-icons mdl-list__item-avatar">
+                                        <img src="${app.pictureCharacter(character[0])}" class="iconoStyle" />
+                                    </i>
+                                    <span class="ajustarLI">${character[0]}</span>
+                                </span>
+                            </li>
+            `;
         });
-        html+= '</ul>';
-        html+= '</li>';
-        html+= '<li onclick="app.openSubmenu(this)" data-open="0">';
-        html+= '<i class="material-icons mdl-list__item-icon submenuClose transicion">arrow_drop_down</i>';
-        html+= '<span class="mdl-list__item-primary-content">Planets <b>(' + arrayDatos[3].length + ')</b></span>';
-        html+= '<ul class="demo-list-item mdl-list ulPlanets hideSubmenuUL transicion">';
-        $(arrayDatos[3]).each(function(iplanets,vplanets) 
-        { 
-            var planets = app.convertirLinkInfoExtra("planets",vplanets);
+        html+=`
+                        </ul>
+                    </li>
+                    <li onclick="app.openSubmenu(this)" data-open="0">
+                        <i class="material-icons mdl-list__item-icon submenuClose transicion">arrow_drop_down</i>
+                        <span class="mdl-list__item-primary-content">Planets <b>(${arrayDatos[3].length})</b></span>
+                        <ul class="demo-list-item mdl-list ulPlanets hideSubmenuUL transicion">
+        ` ;
+        $(arrayDatos[3]).each(function(iplanets,vplanets) { 
+            const planets = app.convertirLinkInfoExtra("planets",vplanets);
             html+= '<li class="">';
             html+= '<span class="mdl-list__item-primary-content">';
             html+= '<i class="material-icons mdl-list__item-avatar"><img src="' + app.picturePlanets(planets[0]) + '" class="iconoStyle" /></i>';
@@ -664,8 +568,7 @@ var app =
         html+= '<i class="material-icons mdl-list__item-icon submenuClose transicion">arrow_drop_down</i>';
         html+= '<span class="mdl-list__item-primary-content">Species <b>(' + arrayDatos[4].length + ')</b></span>';
         html+= '<ul class="demo-list-item mdl-list ulSpecies hideSubmenuUL transicion">';
-        $(arrayDatos[4]).each(function(ispecies,vspecies) 
-        { 
+        $(arrayDatos[4]).each(function(ispecies,vspecies) { 
             var species = app.convertirLinkInfoExtra("species",vspecies);
             html+= '<li class="">';
             html+= '<span class="mdl-list__item-primary-content">';
@@ -681,8 +584,7 @@ var app =
         html+= '<i class="material-icons mdl-list__item-icon submenuClose transicion">arrow_drop_down</i>';
         html+= '<span class="mdl-list__item-primary-content">Starships <b>(' + arrayDatos[5].length + ')</b></span>';
         html+= '<ul class="demo-list-item mdl-list ulStarships hideSubmenuUL transicion">';
-        $(arrayDatos[5]).each(function(istarships,vstarships) 
-        { 
+        $(arrayDatos[5]).each(function(istarships,vstarships) { 
             var starships = app.convertirLinkInfoExtra("starships",vstarships);
             html+= '<li class="">';
             html+= '<span class="mdl-list__item-primary-content">';
@@ -698,8 +600,7 @@ var app =
         html+= '<i class="material-icons mdl-list__item-icon submenuClose transicion">arrow_drop_down</i>';
         html+= '<span class="mdl-list__item-primary-content">Vehicles <b>(' + arrayDatos[6].length + ')</b></span>';
         html+= '<ul class="demo-list-item mdl-list ulVehicles hideSubmenuUL transicion">';
-        $(arrayDatos[6]).each(function(ivehicles,vvehicles) 
-        { 
+        $(arrayDatos[6]).each(function(ivehicles,vvehicles) { 
             var vehicles = app.convertirLinkInfoExtra("vehicles",vvehicles);
             html+= '<li class="">';
             html+= '<span class="mdl-list__item-primary-content">';
@@ -715,8 +616,7 @@ var app =
         html+= '</div>';
         return html;
     },
-    cardInforExtraCharacter: function(arrayDatos)
-    {
+    cardInforExtraCharacter: function(arrayDatos) {
         html= '<div class="mdl-card__supporting-text">';
         html+= '<h2 class="mdl-card__title-text"><b>Extra information</b></h2><br>';
         html+= '<ul class="demo-list-item mdl-list">';
@@ -725,13 +625,11 @@ var app =
         html+= '<i class="material-icons mdl-list__item-icon submenuClose">arrow_drop_down</i>';
         html+= '<span class="mdl-list__item-primary-content">Films <b>(' + arrayDatos[0].length + ')</b></span>';
         html+= '<ul class="demo-list-item mdl-list ulCharacter hideSubmenuUL transicion">';
-        $(arrayDatos[0]).each(function(ifilms,vfilms) 
-        { 
+        $(arrayDatos[0]).each(function(ifilms,vfilms) { 
             var films = app.convertirLinkInfoExtra("films",vfilms);
             var img = app.episode_id(films[0]);
             html+= '<li class="">';
             html+= '<span class="mdl-list__item-primary-content">';
-            
             html+= '<i class="material-icons mdl-list__item-avatar"><img src="' + img[0] + '" class="iconoStyle" /></i>';
             html+= '<span class="ajustarLI">' + films[2] + '</span>';
             html+= '</span>';
@@ -744,8 +642,7 @@ var app =
         html+= '<i class="material-icons mdl-list__item-icon submenuClose transicion">arrow_drop_down</i>';
         html+= '<span class="mdl-list__item-primary-content">Species <b>(' + arrayDatos[1].length + ')</b></span>';
         html+= '<ul class="demo-list-item mdl-list ulPlanets hideSubmenuUL transicion">';
-        $(arrayDatos[1]).each(function(ispecies,vspecies) 
-        { 
+        $(arrayDatos[1]).each(function(ispecies,vspecies) { 
             var species = app.convertirLinkInfoExtra("species",vspecies);
             html+= '<li class="">';
             html+= '<span class="mdl-list__item-primary-content">';
@@ -761,8 +658,7 @@ var app =
         html+= '<i class="material-icons mdl-list__item-icon submenuClose transicion">arrow_drop_down</i>';
         html+= '<span class="mdl-list__item-primary-content">Starships <b>(' + arrayDatos[2].length + ')</b></span>';
         html+= '<ul class="demo-list-item mdl-list ulSpecies hideSubmenuUL transicion">';
-        $(arrayDatos[2]).each(function(istarships,vstarships) 
-        { 
+        $(arrayDatos[2]).each(function(istarships,vstarships) { 
             var starships = app.convertirLinkInfoExtra("starships",vstarships);
             html+= '<li class="">';
             html+= '<span class="mdl-list__item-primary-content">';
@@ -778,8 +674,7 @@ var app =
         html+= '<i class="material-icons mdl-list__item-icon submenuClose transicion">arrow_drop_down</i>';
         html+= '<span class="mdl-list__item-primary-content">Vehicles <b>(' + arrayDatos[3].length + ')</b></span>';
         html+= '<ul class="demo-list-item mdl-list ulStarships hideSubmenuUL transicion">';
-        $(arrayDatos[3]).each(function(ivehicles,vvehicles) 
-        { 
+        $(arrayDatos[3]).each(function(ivehicles,vvehicles) { 
             var vehicles = app.convertirLinkInfoExtra("vehicles",vvehicles);
             html+= '<li class="">';
             html+= '<span class="mdl-list__item-primary-content">';
@@ -795,8 +690,7 @@ var app =
         html+= '</div>';
         return html;
     },
-    cardInforExtraPlanets: function(arrayDatos)
-    {
+    cardInforExtraPlanets: function(arrayDatos) {
         html= '<div class="mdl-card__supporting-text">';
         html+= '<h2 class="mdl-card__title-text"><b>Extra information</b></h2><br>';
         html+= '<ul class="demo-list-item mdl-list">';
@@ -805,8 +699,7 @@ var app =
         html+= '<i class="material-icons mdl-list__item-icon submenuClose">arrow_drop_down</i>';
         html+= '<span class="mdl-list__item-primary-content">Films <b>(' + arrayDatos[0].length + ')</b></span>';
         html+= '<ul class="demo-list-item mdl-list ulCharacter hideSubmenuUL transicion">';
-        $(arrayDatos[0]).each(function(ifilms,vfilms) 
-        { 
+        $(arrayDatos[0]).each(function(ifilms,vfilms) { 
             var films = app.convertirLinkInfoExtra("films",vfilms);
             var img = app.episode_id(films[0]);
             html+= '<li class="">';
@@ -823,8 +716,7 @@ var app =
         html+= '<i class="material-icons mdl-list__item-icon submenuClose transicion">arrow_drop_down</i>';
         html+= '<span class="mdl-list__item-primary-content">Residents <b>(' + arrayDatos[1].length + ')</b></span>';
         html+= '<ul class="demo-list-item mdl-list ulPlanets hideSubmenuUL transicion">';
-        $(arrayDatos[1]).each(function(iresidents,vresidents) 
-        { 
+        $(arrayDatos[1]).each(function(iresidents,vresidents) { 
             var character = app.convertirLinkInfoExtra("people",vresidents);
             html+= '<li class="">';
             html+= '<span class="mdl-list__item-primary-content">';
@@ -840,8 +732,7 @@ var app =
         html+= '</div>';
         return html;
     },
-    cardInforExtraSpecies: function(arrayDatos)
-    {
+    cardInforExtraSpecies: function(arrayDatos) {
         html= '<div class="mdl-card__supporting-text">';
         html+= '<h2 class="mdl-card__title-text"><b>Extra information</b></h2><br>';
         html+= '<ul class="demo-list-item mdl-list">';
@@ -850,8 +741,7 @@ var app =
         html+= '<i class="material-icons mdl-list__item-icon submenuClose">arrow_drop_down</i>';
         html+= '<span class="mdl-list__item-primary-content">Films <b>(' + arrayDatos[0].length + ')</b></span>';
         html+= '<ul class="demo-list-item mdl-list ulCharacter hideSubmenuUL transicion">';
-        $(arrayDatos[0]).each(function(ifilms,vfilms) 
-        { 
+        $(arrayDatos[0]).each(function(ifilms,vfilms) { 
             var films = app.convertirLinkInfoExtra("films",vfilms);
             var img = app.episode_id(films[0]);
             html+= '<li class="">';
@@ -868,8 +758,7 @@ var app =
         html+= '<i class="material-icons mdl-list__item-icon submenuClose transicion">arrow_drop_down</i>';
         html+= '<span class="mdl-list__item-primary-content">Species <b>(' + arrayDatos[1].length + ')</b></span>';
         html+= '<ul class="demo-list-item mdl-list ulPlanets hideSubmenuUL transicion">';
-        $(arrayDatos[1]).each(function(ispecies,vspecies) 
-        { 
+        $(arrayDatos[1]).each(function(ispecies,vspecies) { 
             var character = app.convertirLinkInfoExtra("people",vspecies);
             html+= '<li class="">';
             html+= '<span class="mdl-list__item-primary-content">';
@@ -885,8 +774,7 @@ var app =
         html+= '</div>';
         return html;
     },
-    cardInforExtraStarships: function(arrayDatos)
-    {
+    cardInforExtraStarships: function(arrayDatos) {
         html= '<div class="mdl-card__supporting-text">';
         html+= '<h2 class="mdl-card__title-text"><b>Extra information</b></h2><br>';
         html+= '<ul class="demo-list-item mdl-list">';
@@ -895,8 +783,7 @@ var app =
         html+= '<i class="material-icons mdl-list__item-icon submenuClose">arrow_drop_down</i>';
         html+= '<span class="mdl-list__item-primary-content">Films <b>(' + arrayDatos[0].length + ')</b></span>';
         html+= '<ul class="demo-list-item mdl-list ulCharacter hideSubmenuUL transicion">';
-        $(arrayDatos[0]).each(function(ifilms,vfilms) 
-        { 
+        $(arrayDatos[0]).each(function(ifilms,vfilms) { 
             var films = app.convertirLinkInfoExtra("films",vfilms);
             var img = app.episode_id(films[0]);
             html+= '<li class="">';
@@ -913,8 +800,7 @@ var app =
         html+= '<i class="material-icons mdl-list__item-icon submenuClose transicion">arrow_drop_down</i>';
         html+= '<span class="mdl-list__item-primary-content">Pilots <b>(' + arrayDatos[1].length + ')</b></span>';
         html+= '<ul class="demo-list-item mdl-list ulPlanets hideSubmenuUL transicion">';
-        $(arrayDatos[1]).each(function(ipilots,vpilots) 
-        { 
+        $(arrayDatos[1]).each(function(ipilots,vpilots) { 
             var character = app.convertirLinkInfoExtra("people",vpilots);
             html+= '<li class="">';
             html+= '<span class="mdl-list__item-primary-content">';
@@ -930,8 +816,7 @@ var app =
         html+= '</div>';
         return html;
     },
-    cardInforExtraVehicles: function(arrayDatos)
-    {
+    cardInforExtraVehicles: function(arrayDatos) {
         html= '<div class="mdl-card__supporting-text">';
         html+= '<h2 class="mdl-card__title-text"><b>Extra information</b></h2><br>';
         html+= '<ul class="demo-list-item mdl-list">';
@@ -940,8 +825,7 @@ var app =
         html+= '<i class="material-icons mdl-list__item-icon submenuClose">arrow_drop_down</i>';
         html+= '<span class="mdl-list__item-primary-content">Films <b>(' + arrayDatos[0].length + ')</b></span>';
         html+= '<ul class="demo-list-item mdl-list ulCharacter hideSubmenuUL transicion">';
-        $(arrayDatos[0]).each(function(ifilms,vfilms) 
-        { 
+        $(arrayDatos[0]).each(function(ifilms,vfilms) { 
             var films = app.convertirLinkInfoExtra("films",vfilms);
             var img = app.episode_id(films[0]);
             html+= '<li class="">';
@@ -958,8 +842,7 @@ var app =
         html+= '<i class="material-icons mdl-list__item-icon submenuClose transicion">arrow_drop_down</i>';
         html+= '<span class="mdl-list__item-primary-content">Pilots <b>(' + arrayDatos[1].length + ')</b></span>';
         html+= '<ul class="demo-list-item mdl-list ulPlanets hideSubmenuUL transicion">';
-        $(arrayDatos[1]).each(function(ipilots,vpilots) 
-        { 
+        $(arrayDatos[1]).each(function(ipilots,vpilots) { 
             var character = app.convertirLinkInfoExtra("people",vpilots);
             html+= '<li class="">';
             html+= '<span class="mdl-list__item-primary-content">';
@@ -975,29 +858,28 @@ var app =
         html+= '</div>';
         return html;
     },
-    cardDirector: function(arrayDatos)
-    {
-        html= '<div class="mdl-card__supporting-text">';
-        html+= '<b>Director:</b> ' + arrayDatos[0] + "<br>";
-        html+= '<b>Producer:</b> ' + arrayDatos[1] + "<br>";
-        html+= '<b>Release date:</b> ' + arrayDatos[2] + "<br>";
-        html+= '</div>';
-        return html;
+    cardDirector: function(arrayDatos) {
+        return `
+            <div class="mdl-card__supporting-text">
+                <b>Director:</b>${arrayDatos[0]}<br>
+                <b>Producer:</b>${arrayDatos[1]}<br>
+                <b>Release date:</b>${arrayDatos[2]}<br>
+            </div>';
+        `;
     },
-    navbarPagination: function(arrayDatos)
-    {
-        html= '<table class="mdl-data-table mdl-shadow--2dp customTable">';
-        html+= '<tbody>';
-        html+= '<tr>';
-        html+= '<td class="textCenter">Showing ' + arrayDatos[0] + ' records</td>';
-        html+= '</tr>';
-        html+= '</tbody>';
-        html+= '</table>';
-        return html;
+    navbarPagination: function(arrayDatos) {
+        return `
+            <table class="mdl-data-table mdl-shadow--2dp customTable">
+                <tbody>
+                    <tr>    
+                        <td class="textCenter">Showing ${arrayDatos[0]} records</td>
+                    </tr>
+                </tbody>
+            </table>
+        `;
     },
-    pictureCharacter: function(character)
-    {
-        var img = "img/people/";
+    pictureCharacter: function(character) {
+        let img = "img/people/";
         if (character.indexOf("Luke Skywalker") >= 0) { img+= "Luke-rotjpromo.jpg"; }
         if (character.indexOf("C-3PO") >= 0) { img+= "C-3PO_EP3.png"; }
         if (character.indexOf("R2-D2") >= 0) { img+= "ArtooTFA2-Fathead.png"; }
@@ -1084,30 +966,27 @@ var app =
         if (character.indexOf("BB8") >= 0) { img+= "BB8-Fathead.png"; }
         if (character.indexOf("Captain Phasma") >= 0) { img+= "Capitana_Phasma.png"; }
         if (character.indexOf("Amidala") >= 0) { img+= "Padme_episodeIII_green.png"; }
-        var ret = [img];
-        return ret;
+        return [img];
     },
-    cardInfoCharacters: function(arrayDatos)
-    {
+    cardInfoCharacters: function(arrayDatos) {
         // Titulo y descripción de CARD
-        html= '<div class="mdl-card__supporting-text">';
-        html+= '<h2 class="mdl-card__title-text"><b>' + arrayDatos[6] + '</b></h2><br>';
-        html+= '<ul class="demo-list-item mdl-list">';
-        html+= '<li><span class="mdl-list__item-primary-content"><b>Birth year: </b>' + arrayDatos[0] + '</span></li>';
-        html+= '<li><span class="mdl-list__item-primary-content"><b>Eye color: </b>' + arrayDatos[1] + '</span></li>';
-        html+= '<li><span class="mdl-list__item-primary-content"><b>Gender: </b>' + arrayDatos[2] + '</span></li>';
-        html+= '<li><span class="mdl-list__item-primary-content"><b>Hair color: </b>' + arrayDatos[3] + '</span></li>';
-        html+= '<li><span class="mdl-list__item-primary-content"><b>Height: </b>' + arrayDatos[4] + ' cm</span></li>';
-        html+= '<li><span class="mdl-list__item-primary-content"><b>Mass: </b>' + arrayDatos[5] + ' kg</span></li>';
-        html+= '<li><span class="mdl-list__item-primary-content"><b>Skin color: </b>' + arrayDatos[7] + '</span></li>';
-        html+= '<li><span class="mdl-list__item-primary-content"><b>Homeworld: </b>' + arrayDatos[8] + '</span></li>';
-        html+= '</ul>';
-        html+= '</div>';
-        return html;
+        return `
+            <div class="mdl-card__supporting-text">
+                <h2 class="mdl-card__title-text"><b>${arrayDatos[6]}</b></h2><br>
+                <ul class="demo-list-item mdl-list">
+                    <li><span class="mdl-list__item-primary-content"><b>Birth year: </b>${arrayDatos[0]}</span></li>
+                    <li><span class="mdl-list__item-primary-content"><b>Eye color: </b>${arrayDatos[1]}</span></li>
+                    <li><span class="mdl-list__item-primary-content"><b>Gender: </b>${arrayDatos[2]}</span></li>
+                    <li><span class="mdl-list__item-primary-content"><b>Hair color: </b>${arrayDatos[3]}</span></li>
+                    <li><span class="mdl-list__item-primary-content"><b>Height: </b>${arrayDatos[4]} cm</span></li>
+                    <li><span class="mdl-list__item-primary-content"><b>Mass: </b>${arrayDatos[5]} kg</span></li>
+                    <li><span class="mdl-list__item-primary-content"><b>Skin color: </b>${arrayDatos[7]}</span></li>
+                    <li><span class="mdl-list__item-primary-content"><b>Homeworld: </b>${arrayDatos[8]}</span></li>
+                </ul>
+            </div>
+        `;
     },
-    
-    picturePlanets: function(planets)
-    {
+    picturePlanets: function(planets) {
         var img = "img/planets/";
         if (planets.indexOf("Alderaan") >= 0) { img+= "Alderaan.jpg"; }
         if (planets.indexOf("Yavin IV") >= 0) { img+= "Eaw_Yavin4.jpg"; } 
@@ -1170,11 +1049,9 @@ var app =
         if (planets.indexOf("Umbara") >= 0) { img+= "UmbaraSystem-DoU.jpg"; }
         if (planets.indexOf("Tatooine") >= 0) { img+= "Tatooine_TPM.png"; }
         if (planets.indexOf("Jakku") >= 0)  { img+= "Jakku_-_full_-_SW_Poe_Dameron_Flight_Log_.png"; }
-        var ret = [img];
-        return ret;
+        return [img];
     },
-    pictureSpecies: function(species)
-    {
+    pictureSpecies: function(species) {
         var img = "img/species/";
         if (species.indexOf("Hutt") >= 0)  { img+= "JabbaPromo.png"; }
         if (species.indexOf("Yoda's species") >= 0)  { img+= "MP-YodaSpecies.png"; }
@@ -1213,11 +1090,9 @@ var app =
         if (species.indexOf("Droid") >=0) { img+= "Droid_Counterparts_Fathead.png"; }
         if (species.indexOf("Human") >=0) { img+= "Leiadeathstar.jpg"; }
         if (species.indexOf("Rodian") >=0) { img+= "Rodian_DICE.png"; }
-        var ret = [img];
-        return ret;
+        return [img];
     },
-    pictureStarships: function(species)
-    {
+    pictureStarships: function(species) {
         var img = "img/starships/";
         if (species.indexOf("Sentinel-class landing craft") >= 0)  { img+= "Imperial_Sentinel-class_shuttle.png"; }
         if (species.indexOf("Death Star") >= 0)  { img+= "DeathStar1-SWE.png"; }
@@ -1256,11 +1131,9 @@ var app =
         if (species.indexOf("Belbullab-22 starfighter") >= 0)  { img+= "Soulless_One_TCW.jpg"; }
         if (species.indexOf("V-wing") >= 0)  { img+= "VWing-NEGVV.jpg"; }
         if (species.indexOf("CR90 corvette") >= 0)  { img+= "Rebels-TantiveIVConceptArt-CroppedBackground.png"; }
-        var ret = [img];
-        return ret;
+        return [img];
     },
-    pictureVehicles: function(species)
-    {
+    pictureVehicles: function(species) {
         var img = "img/vehicles/";
         if (species.indexOf("Sand Crawler") >= 0)  { img+= "Sandcrawler.png"; }
         if (species.indexOf("T-16 skyhopper") >= 0)  { img+= "T16skyhopper_negvv.jpg"; }
@@ -1301,111 +1174,101 @@ var app =
         if (species.indexOf("Flitknot speeder") >= 0)  { img+= "FlitknotSpeeder.jpg"; }
         if (species.indexOf("Neimoidian shuttle") >= 0)  { img+= "Sheathipede_OS.jpg"; }
         if (species.indexOf("Geonosian starfighter") >= 0)  { img+= "Nantex-class_fighters.png"; }
-        var ret = [img];
-        return ret;
+        return [img];
     },
-    cardInfoPlanets: function(arrayDatos)
-    {
-        html= '<div class="mdl-card__supporting-text">';
-        html+= '<h2 class="mdl-card__title-text"><b>' + arrayDatos[3] + '</b></h2><br>';
-        html+= '<ul class="demo-list-item mdl-list">';
-        html+= '<li><span class="mdl-list__item-primary-content"><b>Climate: </b>' + arrayDatos[0] + '</span></li>';
-        html+= '<li><span class="mdl-list__item-primary-content"><b>Diameter: </b>' + arrayDatos[1] + ' km</span></li>';
-        html+= '<li><span class="mdl-list__item-primary-content"><b>Gravity: </b>' + arrayDatos[2] + '</span></li>';
-        html+= '<li><span class="mdl-list__item-primary-content"><b>Orbital period: </b>' + arrayDatos[4] + ' days</span></li>';
-        html+= '<li><span class="mdl-list__item-primary-content"><b>Population: </b>' + arrayDatos[5] + '</span></li>';
-        html+= '<li><span class="mdl-list__item-primary-content"><b>Rotation period: </b>' + arrayDatos[6] + ' hoirs</span></li>';
-        html+= '<li><span class="mdl-list__item-primary-content"><b>Surface water: </b>' + arrayDatos[7] + '</span></li>';
-        html+= '<li><span class="mdl-list__item-primary-content"><b>Terrain: </b>' + arrayDatos[8] + '</span></li>';
-        html+= '</ul>';
-        html+= '</div>';
-        return html;
+    cardInfoPlanets: function(arrayDatos) {
+        return `
+            <div class="mdl-card__supporting-text">
+                <h2 class="mdl-card__title-text"><b>${arrayDatos[3]}</b></h2><br>
+                <ul class="demo-list-item mdl-list">
+                    <li><span class="mdl-list__item-primary-content"><b>Climate: </b>${arrayDatos[0]}</span></li>
+                    <li><span class="mdl-list__item-primary-content"><b>Diameter: </b>${arrayDatos[1]} km</span></li>
+                    <li><span class="mdl-list__item-primary-content"><b>Gravity: </b>${arrayDatos[2]}</span></li>
+                    <li><span class="mdl-list__item-primary-content"><b>Orbital period: </b>${arrayDatos[4]} days</span></li>
+                    <li><span class="mdl-list__item-primary-content"><b>Population: </b>${arrayDatos[5]}</span></li>
+                    <li><span class="mdl-list__item-primary-content"><b>Rotation period: </b>${arrayDatos[6]} hoirs</span></li>
+                    <li><span class="mdl-list__item-primary-content"><b>Surface water: </b>${arrayDatos[7]}</span></li>
+                    <li><span class="mdl-list__item-primary-content"><b>Terrain: </b>${arrayDatos[8]}</span></li>
+                </ul>
+            </div>
+        `;
     },
-    cardInfoSpecies: function(arrayDatos)
-    {
-        html= '<div class="mdl-card__supporting-text">';
-        html+= '<h2 class="mdl-card__title-text"><b>' + arrayDatos[7] + '</b></h2><br>';
-        html+= '<ul class="demo-list-item mdl-list">';
-        html+= '<li><span class="mdl-list__item-primary-content"><b>Average Height: </b>' + arrayDatos[0] + ' cm</span></li>';
-        html+= '<li><span class="mdl-list__item-primary-content"><b>Average Lifespan: </b>' + arrayDatos[1] + ' years</span></li>';
-        html+= '<li><span class="mdl-list__item-primary-content"><b>Classification: </b>' + arrayDatos[2] + '</span></li>';
-        html+= '<li><span class="mdl-list__item-primary-content"><b>Designation: </b>' + arrayDatos[3] + ' </span></li>';
-        html+= '<li><span class="mdl-list__item-primary-content"><b>Eye Colors: </b>' + arrayDatos[4] + '</span></li>';
-        html+= '<li><span class="mdl-list__item-primary-content"><b>Hair Colors: </b>' + arrayDatos[5] + ' hoirs</span></li>';
-        html+= '<li><span class="mdl-list__item-primary-content"><b>Language: </b>' + arrayDatos[6] + '</span></li>';
-        html+= '<li><span class="mdl-list__item-primary-content"><b>Skin Colors: </b>' + arrayDatos[8] + '</span></li>';
-        html+= '</ul>';
-        html+= '</div>';
-        return html;
+    cardInfoSpecies: function(arrayDatos) {
+        return `
+            <div class="mdl-card__supporting-text">
+                <h2 class="mdl-card__title-text"><b>${arrayDatos[7]}</b></h2><br>
+                <ul class="demo-list-item mdl-list">
+                    <li><span class="mdl-list__item-primary-content"><b>Average Height: </b>${arrayDatos[0]} cm</span></li>
+                    <li><span class="mdl-list__item-primary-content"><b>Average Lifespan: </b>${arrayDatos[1]} years</span></li>
+                    <li><span class="mdl-list__item-primary-content"><b>Classification: </b>${arrayDatos[2]}</span></li>
+                    <li><span class="mdl-list__item-primary-content"><b>Designation: </b>${arrayDatos[3]} </span></li>
+                    <li><span class="mdl-list__item-primary-content"><b>Eye Colors: </b>${arrayDatos[4]}</span></li>
+                    <li><span class="mdl-list__item-primary-content"><b>Hair Colors: </b>${arrayDatos[5]} hoirs</span></li>
+                    <li><span class="mdl-list__item-primary-content"><b>Language: </b>${arrayDatos[6]}</span></li>
+                    <li><span class="mdl-list__item-primary-content"><b>Skin Colors: </b>${arrayDatos[8]}</span></li>
+                </ul>
+            </div>
+        `;
     },
-    cardInfoStarships: function(arrayDatos)
-    {
-        html= '<div class="mdl-card__supporting-text">';
-        html+= '<h2 class="mdl-card__title-text"><b>' + arrayDatos[10] + '</b></h2><br>';
-        html+= '<ul class="demo-list-item mdl-list">';
-        html+= '<li><span class="mdl-list__item-primary-content"><b>MGLT: </b>' + arrayDatos[0] + ' Megalights / hour</span></li>';
-        html+= '<li><span class="mdl-list__item-primary-content"><b>Cargo Capacity: </b>' + arrayDatos[1] + ' kg</span></li>';
-        html+= '<li><span class="mdl-list__item-primary-content"><b>Consumables: </b>' + arrayDatos[2] + '</span></li>';
-        html+= '<li><span class="mdl-list__item-primary-content"><b>Cost in Credits: </b>' + arrayDatos[3] + ' galactics credits</span></li>';
-        html+= '<li><span class="mdl-list__item-primary-content"><b>Crew: </b>' + arrayDatos[4] + ' personnel</span></li>';
-        html+= '<li><span class="mdl-list__item-primary-content"><b>Hyperdrive Rating: </b>' + arrayDatos[5] + ' hoirs</span></li>';
-        html+= '<li><span class="mdl-list__item-primary-content"><b>Length: </b>' + arrayDatos[6] + ' m</span></li>';
-        html+= '<li><span class="mdl-list__item-primary-content"><b>Manufacturer: </b>' + arrayDatos[7] + '</span></li>';
-        html+= '<li><span class="mdl-list__item-primary-content"><b>Max Atmosphering Speed: </b>' + arrayDatos[8] + '</span></li>';
-        html+= '<li><span class="mdl-list__item-primary-content"><b>Model: </b>' + arrayDatos[9] + '</span></li>';
-        html+= '<li><span class="mdl-list__item-primary-content"><b>Passengers: </b>' + arrayDatos[11] + '</span></li>';
-        html+= '<li><span class="mdl-list__item-primary-content"><b>Starship Class: </b>' + arrayDatos[12] + '</span></li>';
-        html+= '</ul>';
-        html+= '</div>';
-        return html;
+    cardInfoStarships: function(arrayDatos) {
+        return `
+            <div class="mdl-card__supporting-text">
+                <h2 class="mdl-card__title-text"><b>${arrayDatos[10]}</b></h2><br>
+                <ul class="demo-list-item mdl-list">
+                    <li><span class="mdl-list__item-primary-content"><b>MGLT: </b>${arrayDatos[0] }Megalights / hour</span></li>
+                    <li><span class="mdl-list__item-primary-content"><b>Cargo Capacity: </b>${arrayDatos[1] }kg</span></li>
+                    <li><span class="mdl-list__item-primary-content"><b>Consumables: </b>${arrayDatos[2] }/span></li>
+                    <li><span class="mdl-list__item-primary-content"><b>Cost in Credits: </b>${arrayDatos[3] }galactics credits</span></li>
+                    <li><span class="mdl-list__item-primary-content"><b>Crew: </b>${arrayDatos[4] }personnel</span></li>
+                    <li><span class="mdl-list__item-primary-content"><b>Hyperdrive Rating: </b>${arrayDatos[5] }hoirs</span></li>
+                    <li><span class="mdl-list__item-primary-content"><b>Length: </b>${arrayDatos[6] }m</span></li>
+                    <li><span class="mdl-list__item-primary-content"><b>Manufacturer: </b>${arrayDatos[7] }/span></li>
+                    <li><span class="mdl-list__item-primary-content"><b>Max Atmosphering Speed: </b>${arrayDatos[8] }/span></li>
+                    <li><span class="mdl-list__item-primary-content"><b>Model: </b>${arrayDatos[9] }/span></li>
+                    <li><span class="mdl-list__item-primary-content"><b>Passengers: </b>${arrayDatos[11]}</span></li>
+                    <li><span class="mdl-list__item-primary-content"><b>Starship Class: </b>${arrayDatos[12]}</span></li>
+                </ul>
+            </div>
+        `;
     },
-    cardInfoVehicles: function(arrayDatos)
-    {
-        html= '<div class="mdl-card__supporting-text">';
-        html+= '<h2 class="mdl-card__title-text"><b>' + arrayDatos[8] + '</b></h2><br>';
-        html+= '<ul class="demo-list-item mdl-list">';
-        html+= '<li><span class="mdl-list__item-primary-content"><b>Cargo Capacity: </b>' + arrayDatos[0] + ' kg</span></li>';
-        html+= '<li><span class="mdl-list__item-primary-content"><b>Consumables: </b>' + arrayDatos[1] + '</span></li>';
-        html+= '<li><span class="mdl-list__item-primary-content"><b>Cost in Credits: </b>' + arrayDatos[2] + ' galactics credits</span></li>';
-        html+= '<li><span class="mdl-list__item-primary-content"><b>Crew: </b>' + arrayDatos[3] + ' personnel</span></li>';
-        html+= '<li><span class="mdl-list__item-primary-content"><b>Length: </b>' + arrayDatos[4] + ' m</span></li>';
-        html+= '<li><span class="mdl-list__item-primary-content"><b>Manufacturer: </b>' + arrayDatos[5] + '</span></li>';
-        html+= '<li><span class="mdl-list__item-primary-content"><b>Max Atmosphering Speed: </b>' + arrayDatos[6] + '</span></li>';
-        html+= '<li><span class="mdl-list__item-primary-content"><b>Model: </b>' + arrayDatos[7] + '</span></li>';
-        html+= '<li><span class="mdl-list__item-primary-content"><b>Passengers: </b>' + arrayDatos[9] + '</span></li>';
-        html+= '<li><span class="mdl-list__item-primary-content"><b>Vehicle Class: </b>' + arrayDatos[10] + '</span></li>';
-        html+= '</ul>';
-        html+= '</div>';
-        return html;
+    cardInfoVehicles: function(arrayDatos) {
+        return `
+            <div class="mdl-card__supporting-text">
+                <h2 class="mdl-card__title-text"><b>${arrayDatos[8]}</b></h2><br>
+                <ul class="demo-list-item mdl-list">
+                    <li><span class="mdl-list__item-primary-content"><b>Cargo Capacity: </b>${arrayDatos[0]} kg</span></li>
+                    <li><span class="mdl-list__item-primary-content"><b>Consumables: </b>${arrayDatos[1]}</span></li>
+                    <li><span class="mdl-list__item-primary-content"><b>Cost in Credits: </b>${arrayDatos[2]} galactics credits</span></li>
+                    <li><span class="mdl-list__item-primary-content"><b>Crew: </b>${arrayDatos[3]} personnel</span></li>
+                    <li><span class="mdl-list__item-primary-content"><b>Length: </b>${arrayDatos[4]} m</span></li>
+                    <li><span class="mdl-list__item-primary-content"><b>Manufacturer: </b>${arrayDatos[5]}</span></li>
+                    <li><span class="mdl-list__item-primary-content"><b>Max Atmosphering Speed: </b>${arrayDatos[6]}</span></li>
+                    <li><span class="mdl-list__item-primary-content"><b>Model: </b>${arrayDatos[7]}</span></li>
+                    <li><span class="mdl-list__item-primary-content"><b>Passengers: </b>${arrayDatos[9]}</span></li>
+                    <li><span class="mdl-list__item-primary-content"><b>Vehicle Class: </b>${arrayDatos[10]}</span></li>
+                </ul>
+            </div>
+        `;
     },
-    menuOptions: function(dataURL)
-    {
+    menuOptions: function(dataURL) {
         $("#container").empty();
-        $(app.objetoAPI).each(function(i,v)
-        {
-            if (v[0] == dataURL)
-            {
-                if (/films/.test(dataURL))
-                {
+        $(app.objetoAPI).each(function(i,v) {
+            if (v[0] == dataURL) {
+                if (/films/.test(dataURL)) {
                     var data = v[1];
-                    if (data[0] !== undefined)
-                    {
+                    if (data[0] !== undefined) {
                         var totalRegistros = data[0];
                         var next = data[1];
                         var prev = data[2]
                         var results = data[3];
                         var resultsSort = app.sortByColumn(results, 'release_date');
-                        if ($("table.customTable").length == 0)
-                        {
+                        if ($("table.customTable").length == 0) {
                             var arrayNavbar = [totalRegistros, next, prev];
                             var html = app.navbarPagination(arrayNavbar);    
-                        }
-                        else
-                        {
+                        } else {
                             var html = "";
                         }
-                        $(resultsSort).each(function(i3,v3)
-                        {
+                        $(resultsSort).each(function(i3,v3) {
                             var urlFilm = v3['url'];
                             // Cuando fue creado el registro en la bbdd
                             var created = v3['created'];
@@ -1427,26 +1290,20 @@ var app =
                     }
                     $("#container .demo-card-wide[data-type=films]").css("background-color",app.colorFilms);
                 }
-                if (/people/.test(dataURL))
-                {
+                if (/people/.test(dataURL)) {
                     var data = v[1];
-                    if (data[0] !== undefined)
-                    {
+                    if (data[0] !== undefined) {
                         var totalRegistros = data[0];
                         var next = data[1];
                         var prev = data[2];
                         var results = data[3];
-                        if ($("table.customTable").length == 0)
-                        {
+                        if ($("table.customTable").length == 0) {
                             var arrayNavbar = [totalRegistros, next, prev];
                             var html = app.navbarPagination(arrayNavbar);    
-                        }
-                        else
-                        {
+                        } else {
                             var html = "";
                         }
-                        $(results).each(function(i2,v2)
-                        {
+                        $(results).each(function(i2,v2) {
                             var arrayDatosInfo = [v2['birth_year'],v2['eye_color'],v2['gender'],v2['hair_color'],v2['height'],v2['mass'],v2['name'],v2['skin_color'],v2['homeworld']];
                             var arrayDatosInfoExtra = [v2['films'],v2['species'],v2['starships'],v2['vehicles']];
                             html+= '<div class="demo-card-wide mdl-card mdl-shadow--4dp" data-type="people">';
@@ -1459,26 +1316,20 @@ var app =
                     }
                     $("#container .demo-card-wide[data-type=people]").css("background-color",app.colorPeople);
                 }
-                if (/planets/.test(dataURL))
-                {
+                if (/planets/.test(dataURL)) {
                     var data = v[1];
-                    if (data[0] !== undefined)
-                    {
+                    if (data[0] !== undefined) {
                         var totalRegistros = data[0];
                         var next = data[1];
                         var prev = data[2];
                         var results = data[3];
-                        if ($("table.customTable").length == 0)
-                        {
+                        if ($("table.customTable").length == 0) {
                             var arrayNavbar = [totalRegistros, next, prev];
                             var html = app.navbarPagination(arrayNavbar);    
-                        }
-                        else
-                        {
+                        } else {
                             var html = "";
                         }
-                        $(results).each(function(i2,v2)
-                        {
+                        $(results).each(function(i2,v2) {
                             var arrayDatos = [v2['climate'],v2['diameter'],v2['gravity'],v2['name'],v2['orbital_period'],v2['population'],v2['rotation_period'],v2['surface_water'],v2['terrain']];
                             var arrayDatosInfoExtra = [v2['films'],v2['residents']];
                             html+= '<div class="demo-card-wide mdl-card mdl-shadow--4dp" data-type="planets">';
@@ -1491,26 +1342,20 @@ var app =
                     }
                     $("#container .demo-card-wide[data-type=planets]").css("background-color",app.colorPlanets);
                 }
-                if (/species/.test(dataURL))
-                {
+                if (/species/.test(dataURL)) {
                     var data = v[1];
-                    if (data[0] !== undefined)
-                    {
+                    if (data[0] !== undefined) {
                         var totalRegistros = data[0];
                         var next = data[1];
                         var prev = data[2];
                         var results = data[3];
-                        if ($("table.customTable").length == 0)
-                        {
+                        if ($("table.customTable").length == 0) {
                             var arrayNavbar = [totalRegistros, next, prev];
                             var html = app.navbarPagination(arrayNavbar);    
-                        }
-                        else
-                        {
+                        } else {
                             var html = "";
                         }
-                        $(results).each(function(i2,v2)
-                        {
+                        $(results).each(function(i2,v2) {
                             var arrayDatos = [v2['average_height'],v2['average_lifespan'],v2['classification'],v2['designation'],v2['eye_colors'],v2['hair_colors'],v2['language'],v2['name'],v2['skin_colors']];
                             var arrayDatosInfoExtra = [v2['films'],v2['people']];
                             html+= '<div class="demo-card-wide mdl-card mdl-shadow--4dp" data-type="planets">';
@@ -1523,26 +1368,20 @@ var app =
                     }
                     $("#container .demo-card-wide[data-type=planets]").css("background-color",app.colorSpecies);
                 }
-                if (/starships/.test(dataURL))
-                {
+                if (/starships/.test(dataURL)) {
                     var data = v[1];
-                    if (data[0] !== undefined)
-                    {
+                    if (data[0] !== undefined) {
                         var totalRegistros = data[0];
                         var next = data[1];
                         var prev = data[2];
                         var results = data[3];
-                        if ($("table.customTable").length == 0)
-                        {
+                        if ($("table.customTable").length == 0) {
                             var arrayNavbar = [totalRegistros, next, prev];
                             var html = app.navbarPagination(arrayNavbar);    
-                        }
-                        else
-                        {
+                        } else {
                             var html = "";
                         }
-                        $(results).each(function(i2,v2)
-                        {
+                        $(results).each(function(i2,v2) {
                             var arrayDatos = [v2['MGLT'],v2['cargo_capacity'],v2['consumables'],v2['cost_in_credits'],v2['crew'],v2['hyperdrive_rating'],v2['length'],v2['manufacturer'],v2['max_atmosphering_speed'],v2['model'],v2['name'],v2['passengers'],v2['starship_class']];
                             var arrayDatosInfoExtra = [v2['films'],v2['pilots']];
                             html+= '<div class="demo-card-wide mdl-card mdl-shadow--4dp" data-type="planets">';
@@ -1555,26 +1394,20 @@ var app =
                     }
                     $("#container .demo-card-wide[data-type=planets]").css("background-color",app.colorStarships);
                 }
-                if (/vehicles/.test(dataURL))
-                {
+                if (/vehicles/.test(dataURL)) {
                     var data = v[1];
-                    if (data[0] !== undefined)
-                    {
+                    if (data[0] !== undefined) {
                         var totalRegistros = data[0];
                         var next = data[1];
                         var prev = data[2];
                         var results = data[3];
-                        if ($("table.customTable").length == 0)
-                        {
+                        if ($("table.customTable").length == 0) {
                             var arrayNavbar = [totalRegistros, next, prev];
                             var html = app.navbarPagination(arrayNavbar);    
-                        }
-                        else
-                        {
+                        } else {
                             var html = "";
                         }
-                        $(results).each(function(i2,v2)
-                        {
+                        $(results).each(function(i2,v2) {
                             var arrayDatos = [v2['cargo_capacity'],v2['consumables'],v2['cost_in_credits'],v2['crew'],v2['length'],v2['manufacturer'],v2['max_atmosphering_speed'],v2['model'],v2['name'],v2['passengers'],v2['vehicle_class']];
                             var arrayDatosInfoExtra = [v2['films'],v2['pilots']];
                             html+= '<div class="demo-card-wide mdl-card mdl-shadow--4dp" data-type="planets">';
@@ -1590,23 +1423,19 @@ var app =
             }
         })
     },
-    sortByColumn: function(a, nomCol)
-    {
+    sortByColumn: function(a, nomCol) {
         a.sort(sortFunction);
-        function sortFunction(a, b) 
-        {
+        function sortFunction(a, b) {
             if (a[nomCol] === b[nomCol]) { return 0; }
             else { return (a[nomCol] < b[nomCol]) ? -1 : 1; }
         }
         return a;
     },
-    loading: function(estado)
-    {
+    loading: function(estado) {
         if (estado) { $("#loadingData").show(); }
         else { $("#loadingData").hide(); }
     },
-    video: function (episode_id)
-    {
+    video: function (episode_id) {
         var urlVideo = "";
         if (episode_id == 4) { urlVideo = "https://www.youtube.com/watch?v=yHfLyMAHrQE"; }
         if (episode_id == 5) { urlVideo = "https://www.youtube.com/watch?v=lGsAxG0r9wQ"; }
@@ -1617,14 +1446,11 @@ var app =
         if (episode_id == 7) { urlVideo = "https://www.youtube.com/watch?v=8sarFZJl3h0"; }
         $(location).attr("href",urlVideo);
     },
-    exit: function() 
-    {
+    exit: function()  {
         var exit = confirm("Exit app?")
-        if (exit)
-        {
+        if (exit) {
             navigator.app.exitApp();
         }
-            
     }    
 };
 app.loadingResources();
